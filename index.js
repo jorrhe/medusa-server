@@ -23,6 +23,8 @@ app.use(bodyParser.json());
 
 app.use('/login',require('./rutas/login'));
 
-http.listen(process.env.MEDUSA_SERVER_PORT,()=>{
-    console.log("Escuchando en: "+process.env.MEDUSA_SERVER_PORT)
+const PORT = process.env.PORT || process.env.MEDUSA_SERVER_PORT
+
+http.listen(PORT,()=>{
+    console.log("Escuchando en: "+PORT)
 });
