@@ -4,7 +4,7 @@
   "description": "Servidor de socket io + Express para la app de medusa",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "index.js"
   },
   "author": "Jorge Roselló Martín",
   "license": "ISC",
