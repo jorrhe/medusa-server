@@ -28,7 +28,9 @@ module.exports = {
 
         }
 
-        setInterval(()=>{
+        console.log("Carga inicial API completada");
+
+        let precioActual = ()=>{
 
             this.getAhora(ids).then((precios)=>{
 
@@ -37,11 +39,15 @@ module.exports = {
                 }
                 //todo hacer algo para cuando ha ocurrido un error
             }).catch(err => {
-               console.log("ERROR API COINGECKO catch");
-               console.log(err);
+                console.log("ERROR API COINGECKO catch");
+                console.log(err);
             });
 
-        },30000);
+        };
+
+        precioActual();
+
+        setInterval(precioActual,30000);
 
     },
 
@@ -69,7 +75,8 @@ module.exports = {
         let respuesta = await coinGeckoClient.simple.price({
             ids:idsDivisas,
             vs_currencies:'eur',
-            include_last_updated_at:true
+            include_last_updated_at:true,
+            include_24hr_change: true
         });
 
         if(respuesta.success && respuesta.code === 200){

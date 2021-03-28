@@ -18,13 +18,21 @@ router.use(cors({
 router.post('/google',async (req,res)=>{
 
     //todo verificar que el body contiene todo y es válido
-    if(req.body.google.uc.id_token){
+    let tokenGoogle = false;
+
+    if(req.body.google && req.body.google.uc){
+        tokenGoogle = req.body.google.uc.id_token;
+    }else if(req.body.google && req.body.google.tc){
+        tokenGoogle = req.body.google.tc.id_token;
+    }
+
+    if(tokenGoogle){
 
         let payload;
         let existe;
 
         try{
-            payload = await controladorGoogle.verificarToken(req.body.google.uc.id_token);
+            payload = await controladorGoogle.verificarToken(tokenGoogle)
 
             existe = await controladorUsuario.existeUsuarioDeGoogle(payload.sub);
         }catch (err){
@@ -48,9 +56,15 @@ router.post('/google',async (req,res)=>{
             registrado:existe
         });
 
+    }else{
+        console.log(req.body);
+        res.send({
+            error:true,
+            mensaje:"Error con la petición"
+        });
     }
 
-});
+})
 
 router.post('/registro',async (req,res)=> {
 

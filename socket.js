@@ -36,7 +36,7 @@ module.exports = (http) => {
             let ultimoPrecio = precios[precios.length-1]
 
             this.divisas[id].precio = {
-                fecha: ultimoPrecio[0],
+                fecha: 0,
                 valor: ultimoPrecio[1]
             }
 
@@ -61,7 +61,8 @@ module.exports = (http) => {
 
                     divisa.precio = {
                         fecha: fechaNueva,
-                        valor: precioNuevo.eur
+                        valor: precioNuevo.eur,
+                        cambio: precioNuevo.eur_24h_change * 0.01
                     }
 
                     io.emit(EMITIR.NUEVO_PRECIO,id,divisa.precio);
