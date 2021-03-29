@@ -16,12 +16,13 @@ module.exports = {
             };
         });
 
-        datos.cartera.euros = {
+        datos.cartera.fiat = {
             cantidad: 10000,
             transacciones: [{
                 cantidad:10000,
                 fecha:new Date(),
-                precio_compra:1
+                precio:1,
+                detalles:"Dinero inicial"
             }]
         };
 

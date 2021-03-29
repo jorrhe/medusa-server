@@ -6,14 +6,20 @@ const DIVISAS = require('./divisas');
 let cartera = {};
 
 
-Object.keys(DIVISAS).concat('euros').forEach((divisa)=>{
+Object.keys(DIVISAS).concat('fiat').forEach((divisa)=>{
     cartera[divisa] = {
         cantidad:Number,
         transacciones: [{
             _id: false,
             cantidad:Number,
             fecha:Date,
-            precio_compra:Number
+            precio:Number,
+            tipo: {
+                type:String,
+                enum: ['compra','venta'],
+                default: 'compra'
+            },
+            detalles:String
         }]
     }
 })

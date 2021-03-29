@@ -97,6 +97,7 @@ module.exports = (http) => {
                 console.log("No se encuentra el usuario");
                 console.log(resultado);
                 socket.emit(EMITIR.DESCONECTAR);
+                socket.disconnect();
 
             }
 
