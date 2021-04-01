@@ -1,19 +1,24 @@
-// Para el servidor de express
-const app = require('express')();
-const http = require('http').createServer(app);
-const bodyParser = require('body-parser');
-const helmet = require('helmet');
+import App from 'express';
+import bodyParser from 'body-parser';
+import helmet from 'helmet';
+import mongoose from 'mongoose';
 
-app.use(helmet());
 // Controladores
-const apiCriptoDivisas = require('./controlador/api-criptodivisas');
+import Criptodivisas from './controlador/criptodivisas.js';
 
 // Funcionamiento de la comunicación por socket
-const funcionesSocket = require('./socket')(http);
+import Socket from './controlador/socket.js';
 
-apiCriptoDivisas.init(funcionesSocket).catch(err => {
-    console.log(err);
-});
+// Rutas
+import Login from './rutas/login.js';
+
+// DB
+mongoose.connect(process.env.MONGO_DB_URL, {useNewUrlParser: true,useUnifiedTopology:true});
+
+// Express
+const app = App();
+
+app.use(helmet());
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -21,10 +26,25 @@ app.use(bodyParser.urlencoded({
 
 app.use(bodyParser.json());
 
-app.use('/login',require('./rutas/login'));
+app.use('/login',Login);
 
 const PORT = process.env.PORT || process.env.MEDUSA_SERVER_PORT
 
-http.listen(PORT,()=>{
+const server = app.listen(PORT,()=>{
     console.log("Escuchando en: "+PORT)
 });
+
+// Cargamos el controlador y el socket
+let controladorCripto = new Criptodivisas();
+
+Socket(server,controladorCripto);
+
+controladorCripto.init().catch(err => {
+    console.log(err);
+});
+
+setInterval(()=>{
+    controladorCripto.precioActual().catch(err => {
+        console.log(err);
+    });
+},30000);

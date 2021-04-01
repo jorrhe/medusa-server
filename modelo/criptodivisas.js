@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     bitcoin:{
         simbolo: 'btc',
         nombre: 'Bitcoin',

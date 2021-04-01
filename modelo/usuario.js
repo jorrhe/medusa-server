@@ -1,10 +1,8 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import mongoose from 'mongoose';
 
-const DIVISAS = require('./divisas');
+import DIVISAS from './criptodivisas.js';
 
 let cartera = {};
-
 
 Object.keys(DIVISAS).concat('fiat').forEach((divisa)=>{
     cartera[divisa] = {
@@ -24,7 +22,7 @@ Object.keys(DIVISAS).concat('fiat').forEach((divisa)=>{
     }
 })
 
-const Usuario = new Schema ({
+const Usuario = new mongoose.Schema ({
     id_google:{ type: String, required: true },
     nombre: { type: String, required: true },
     email: { type: String, required: true },
@@ -33,4 +31,7 @@ const Usuario = new Schema ({
 
 });
 
-module.exports = mongoose.model('Usuario', Usuario)
+Usuario.methods.getCantidad = (id) => this.cartera[id].cantidad;
+
+
+export default mongoose.model('Usuario', Usuario);

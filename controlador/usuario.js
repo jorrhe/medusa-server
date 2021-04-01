@@ -1,9 +1,7 @@
-require("../db");
-const Usuario = require("../modelo/usuario");
+import Usuario from "../modelo/usuario.js";
+import DIVISAS from '../modelo/criptodivisas.js';
 
-const DIVISAS = require('../modelo/divisas')
-
-module.exports = {
+export default {
 
     async nuevo(datos){
 
@@ -30,12 +28,10 @@ module.exports = {
 
         await nuevoUsuario.save();
 
-        console.log("Usuario Guardado")
-
     },
 
     async getUsuario(idGoogle){
-        return Usuario.find({id_google: idGoogle},{_id:0,_v:0});
+        return Usuario.find({id_google: idGoogle});
     },
 
     // Funciones para comprobar
@@ -52,6 +48,53 @@ module.exports = {
         let resultado = await Usuario.find({id_google:idGoogle});
 
         return resultado.length > 0;
+
+    },
+
+    async nuevaTransaccion(usuario,tipo,transaccion){
+
+        let precioTotal = transaccion.cantidad * transaccion.precio;
+
+        let carteraCripto = usuario.cartera[transaccion.divisa],
+            carteraFiat = usuario.cartera['fiat'];
+
+        if (carteraFiat.cantidad > precioTotal && carteraCripto){
+
+            let fecha = new Date();
+
+
+            let transaccionFiat = {
+                fecha,
+                tipo:tipo==='compra' ? 'venta' : 'compra',
+                precio:1,
+                cantidad:precioTotal,
+                detalles:transaccion.divisa
+            };
+
+            let transaccionCripto = {
+                fecha,
+                tipo,
+                precio: transaccion.precio,
+                cantidad: transaccion.cantidad,
+                detalles:''
+            }
+
+            carteraCripto.cantidad += (tipo==='compra' ? 1 : -1) * transaccion.cantidad;
+            carteraCripto.transacciones.push(transaccionCripto);
+
+            carteraFiat.cantidad += (tipo==='compra' ? -1 : 1) * precioTotal;
+            carteraFiat.transacciones.push(transaccionFiat);
+
+            await usuario.save();
+
+            return {
+                fiat:transaccionFiat,
+                [transaccion.divisa]:transaccionCripto
+            }
+
+        }
+
+        return false;
 
     }
 

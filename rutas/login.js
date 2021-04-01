@@ -1,14 +1,15 @@
-const express = require('express');
-const router = express.Router();
-const cors = require('cors');
+import {Router} from 'express';
+import cors from 'cors';
 
 // Generación de tokens
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
 // Controladores
-const controladorGoogle = require('../controlador/api-google.js');
-const controladorUsuario = require('../controlador/usuario');
+import ApiGoogle from '../api/google.js';
+import controladorUsuario from '../controlador/usuario.js';
 
+let router = new Router(),
+    apiGoogle = new ApiGoogle();
 
 router.use(cors({
     origin:process.env.MEDUSA_APP_URL,optionsSuccessStatus: 200
@@ -26,43 +27,44 @@ router.post('/google',async (req,res)=>{
         tokenGoogle = req.body.google.tc.id_token;
     }
 
-    if(tokenGoogle){
-
-        let payload;
-        let existe;
-
-        try{
-            payload = await controladorGoogle.verificarToken(tokenGoogle)
-
-            existe = await controladorUsuario.existeUsuarioDeGoogle(payload.sub);
-        }catch (err){
-            console.log(err);
-            res.send({
-                error:true,
-                mensaje:"Error con la autenticación"
-            });
-            return;
-        }
-
-        let token = firmarToken({
-            email: payload.email,
-            id:payload.sub,
-            registrado:existe
-        });
-
-        res.send({
-            error:false,
-            token: token,
-            registrado:existe
-        });
-
-    }else{
+    if(!tokenGoogle){
         console.log(req.body);
         res.send({
             error:true,
             mensaje:"Error con la petición"
         });
+        return;
     }
+
+    let payload;
+    let existe;
+
+    try{
+        payload = await apiGoogle.verificarToken(tokenGoogle)
+
+        existe = await controladorUsuario.existeUsuarioDeGoogle(payload.sub);
+    }catch (err){
+        console.log(err);
+        res.send({
+            error:true,
+            mensaje:"Error con la autenticación"
+        });
+        return;
+    }
+
+    let token = firmarToken({
+        email: payload.email,
+        id:payload.sub,
+        registrado:existe
+    });
+
+    res.send({
+        error:false,
+        token: token,
+        registrado:existe
+    });
+
+
 
 })
 
@@ -70,59 +72,60 @@ router.post('/registro',async (req,res)=> {
 
     let body = req.body;
 
-    if(body.nombre && body.token){
+    console.log(body);
 
-        let token = jwt.decode(body.token);
+    if(!body.nombre || !body.token){
+        return;
+    }
 
-        if(token && token.registrado === false){
-            let existe = await controladorUsuario.existeNombre(body.nombre);
+    let token = jwt.decode(body.token);
+    console.log(token)
+    if(!token || token.registrado){
+        res.send({
+            error:true,
+            mensaje:"Error con el token"
+        });
+        return
+    }
 
-            let existeGoogle = await controladorUsuario.existeUsuarioDeGoogle(token.id);
+    console.log("Login")
 
-            if(!existe && !existeGoogle){
+    let existe = await controladorUsuario.existeNombre(body.nombre);
 
-                try{
-                    await controladorUsuario.nuevo({
-                        id_google: token.id,
-                        nombre:body.nombre,
-                        email:token.email
-                    });
+    let existeGoogle = await controladorUsuario.existeUsuarioDeGoogle(token.id);
 
-                    res.send({
-                        error:false,
-                        token: firmarToken({
-                            id:token.id,
-                            email:token.email,
-                            nombre:body.nombre
-                        })
-                    })
+    if(!existe && !existeGoogle){
 
-                }catch (err){
-                    console.log(err);
-                    res.send({
-                        error:true,
-                        mensaje:"Ha ocurrido un error con la BDD"
-                    });
-                }
+        try{
+            await controladorUsuario.nuevo({
+                id_google: token.id,
+                nombre:body.nombre,
+                email:token.email
+            });
 
-            }else{
-                res.send({
-                    error:true,
-                    mensaje:"El nombre de usuario ya existe"
-                });
-            }
-        }else{
+            res.send({
+                error:false,
+                token: firmarToken({
+                    id:token.id,
+                    email:token.email,
+                    nombre:body.nombre
+                })
+            })
+
+        }catch (err){
+            console.log(err);
             res.send({
                 error:true,
-                mensaje:"Error con el token"
+                mensaje:"Ha ocurrido un error con la BDD"
             });
         }
 
-        console.log(token);
-
+    }else{
+        res.send({
+            error:true,
+            mensaje:"El nombre de usuario ya existe"
+        });
     }
-
-    console.log(req.body);
 
 });
 
@@ -136,4 +139,4 @@ function firmarToken(datos){
     );
 }
 
-module.exports = router;
+export default router;

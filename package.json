@@ -8,18 +8,19 @@
   },
   "author": "Jorge Roselló Martín",
   "license": "ISC",
+  "type": "module",
   "dependencies": {
     "@thream/socketio-jwt": "^2.1.0",
     "body-parser": "^1.19.0",
     "coingecko-api": "^1.0.10",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "google-auth-library": "^7.0.2",
+    "google-auth-library": "^7.0.3",
     "helmet": "^4.4.1",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",
-    "mongoose": "^5.12.0",
-    "socket.io": "^4.0.0",
+    "mongoose": "^5.12.3",
+    "socket.io": "^4.0.1",
     "socketio-jwt": "^4.6.2"
   }
 }
