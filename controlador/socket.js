@@ -1,6 +1,5 @@
-import {Server} from "socket.io";
+import {Server,Socket} from "socket.io";
 import socketioJwt from 'socketio-jwt';
-
 
 const EMITIR = {
     INICIO:"inicio",
@@ -17,6 +16,12 @@ const ON = {
 
 import controladorUsuario from './usuario.js';
 
+/**
+ *
+ * @param {Express} server
+ * @param {Criptodivisas} criptodivisas
+ * @returns {Server<DefaultEventsMap, DefaultEventsMap>}
+ */
 export default (server,criptodivisas) => {
 
     const io = new Server(server,{
@@ -71,6 +76,11 @@ export default (server,criptodivisas) => {
 
 }
 
+/**
+ *
+ * @param {Socket} socket
+ * @param {Criptodivisas} criptodivisas
+ */
 function funcionesSocket(socket,criptodivisas){
 
     socket.emit(EMITIR.INICIO, {
