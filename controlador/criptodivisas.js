@@ -59,7 +59,7 @@ export default class Criptodivisas{
         let precios = await this.apiCoingecko.getAhora(Object.keys(DIVISAS));
 
         if(precios ===false ){
-            console.log("Error con PreicoActual");
+            console.log("Error con precio actual");
             return;
         }
 

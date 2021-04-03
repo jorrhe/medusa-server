@@ -89,8 +89,10 @@ router.post('/registro',async (req,res)=> {
     }
 
     console.log("Login")
+    //todo Hacer que el nombre no acepte carácteres especiales
+    let nombre = body.nombre.trim();
 
-    let existe = await controladorUsuario.existeNombre(body.nombre);
+    let existe = await controladorUsuario.existeNombre(nombre);
 
     let existeGoogle = await controladorUsuario.existeUsuarioDeGoogle(token.id);
 

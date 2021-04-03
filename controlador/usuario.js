@@ -31,15 +31,16 @@ export default {
     },
 
     async getUsuario(idGoogle){
-        return Usuario.find({id_google: idGoogle});
+        return Usuario.find({id_google: idGoogle},{_v:false});
     },
 
     // Funciones para comprobar
     async existeNombre(nombre){
 
-        let resultado = await Usuario.find({nombre:nombre},);
+        // Regex para que no discrimine por mayúsculas y minúsculas
+        let regexMin = new RegExp(nombre, "i");
 
-        return resultado.length > 0;
+        return await Usuario.exists({nombre:regexMin});
 
     },
 
@@ -51,7 +52,9 @@ export default {
 
     },
 
-    async nuevaTransaccion(usuario,tipo,transaccion){
+    async nuevaTransaccion(guid,tipo,transaccion){
+
+        let usuario = await Usuario.findById(guid).exec();
 
         let precioTotal = transaccion.cantidad * transaccion.precio;
 

@@ -38,9 +38,11 @@ export default (server,criptodivisas) => {
 
             if(resultado.length > 0){
 
-                socket.usuario = resultado[0];
+                let usuario = resultado[0];
 
-                funcionesSocket(socket,criptodivisas);
+                socket.usuario = usuario._id;
+
+                funcionesSocket(socket,usuario,criptodivisas);
 
             }else{
 
@@ -71,10 +73,10 @@ export default (server,criptodivisas) => {
 
 }
 
-function funcionesSocket(socket,criptodivisas){
+function funcionesSocket(socket,usuario,criptodivisas){
 
     socket.emit(EMITIR.INICIO, {
-        usuario:socket.usuario,
+        usuario:usuario,
         divisas:criptodivisas.divisas
     });
 
