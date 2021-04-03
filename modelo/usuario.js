@@ -10,7 +10,10 @@ Object.keys(DIVISAS).concat('fiat').forEach((divisa)=>{
         transacciones: [{
             _id: false,
             cantidad:Number,
-            fecha:Date,
+            fecha: {
+                type:Date,
+                default: Date.now
+            },
             precio:Number,
             tipo: {
                 type:String,
@@ -23,9 +26,11 @@ Object.keys(DIVISAS).concat('fiat').forEach((divisa)=>{
 })
 
 const Usuario = new mongoose.Schema ({
-    id_google:{ type: String, required: true },
+    id_google: { type: String, required: true },
     nombre: { type: String, required: true },
     email: { type: String, required: true },
+    fecha_registro: { type: Date, default: Date.now },
+    resets: { type: Number, default: 0 },
 
     cartera:cartera
 

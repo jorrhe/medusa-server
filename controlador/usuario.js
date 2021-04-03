@@ -18,7 +18,6 @@ export default {
             cantidad: 10000,
             transacciones: [{
                 cantidad:10000,
-                fecha:new Date(),
                 precio:1,
                 detalles:"Dinero inicial"
             }]
@@ -63,11 +62,7 @@ export default {
 
         if (carteraFiat.cantidad > precioTotal && carteraCripto){
 
-            let fecha = new Date();
-
-
             let transaccionFiat = {
-                fecha,
                 tipo:tipo==='compra' ? 'venta' : 'compra',
                 precio:1,
                 cantidad:precioTotal,
@@ -75,7 +70,6 @@ export default {
             };
 
             let transaccionCripto = {
-                fecha,
                 tipo,
                 precio: transaccion.precio,
                 cantidad: transaccion.cantidad,
