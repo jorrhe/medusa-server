@@ -5,7 +5,10 @@ export default class Criptodivisas{
 
     constructor(){
 
-        this.listeners = {};
+        this.listeners = {
+            cambioPrecio:()=>{},
+            ult24h:()=>{}
+        };
 
         this.divisas = DIVISAS;
 
