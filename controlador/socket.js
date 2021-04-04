@@ -12,7 +12,8 @@ const EMITIR = {
 };
 
 const ON = {
-    TRANSACCION:"transaccion"
+    TRANSACCION: "transaccion",
+    BORRAR_CUENTA: "borrar-cuenta"
 };
 
 import controladorUsuario from './usuario.js';
@@ -122,6 +123,17 @@ function funcionesSocket(socket,usuario,criptodivisas){
 
         });
 
+    });
+
+    socket.on(ON.BORRAR_CUENTA,()=>{
+        controladorUsuario.borrar(socket.usuario).then(resultado => {
+            if(resultado.deletedCount === 1){
+                socket.emit("desconectar");
+            }
+        }).catch(err => {
+            console.log(err);
+            //todo informar al usuario del error
+        });
     });
 
     console.log(`hello!`);

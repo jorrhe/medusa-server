@@ -72,14 +72,12 @@ router.post('/registro',async (req,res)=> {
 
     let body = req.body;
 
-    console.log(body);
-
     if(!body.nombre || !body.token){
         return;
     }
 
     let token = jwt.decode(body.token);
-    console.log(token)
+
     if(!token || token.registrado){
         res.send({
             error:true,
@@ -88,9 +86,23 @@ router.post('/registro',async (req,res)=> {
         return
     }
 
-    console.log("Login")
-    //todo Hacer que el nombre no acepte carácteres especiales
     let nombre = body.nombre.trim();
+
+    if(!/^[a-zA-Z0-9]+$/.test(nombre)){
+        res.send({
+            error:true,
+            mensaje:"Solo puedes usar letras y números en el nombre"
+        });
+        return
+    }
+
+    if(nombre.length < 4 && nombre.length > 15){
+        res.send({
+            error:true,
+            mensaje:"El tamaño tiene que ser entre 4 y 15 carácteres"
+        });
+        return
+    }
 
     let existe = await controladorUsuario.existeNombre(nombre);
 

@@ -29,6 +29,10 @@ export default {
 
     },
 
+    async borrar(id){
+        return Usuario.deleteOne({_id:id});
+    },
+
     async getUsuario(idGoogle){
         return Usuario.find({id_google: idGoogle},{_v:false});
     },
@@ -37,7 +41,7 @@ export default {
     async existeNombre(nombre){
 
         // Regex para que no discrimine por mayúsculas y minúsculas
-        let regexMin = new RegExp(nombre, "i");
+        let regexMin = new RegExp(`\b${nombre}\b`, "i");
 
         return await Usuario.exists({nombre:regexMin});
 
