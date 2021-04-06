@@ -17,12 +17,14 @@ export default {
     cardano:{
         simbolo: 'ada',
         nombre: 'Cardano',
-        color:'#0d1e30'
+        color:'#0d1e30',
+        colorOscuro:'#3b72bc'
     },
     ripple:{
         simbolo: 'xrp',
         nombre: 'XRP',
-        color: '#23292f'
+        color: '#23292f',
+        colorOscuro: '#6b85a7'
     },
     uniswap:{
         simbolo: 'uni',
@@ -32,7 +34,8 @@ export default {
     litecoin:{
         simbolo: 'ltc',
         nombre: 'Litecoin',
-        color:'#d3d3d3'
+        color:'#d3d3d3',
+        colorClaro: '#888888'
     },
     chainlink:{
         simbolo: 'link',
