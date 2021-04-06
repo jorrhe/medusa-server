@@ -70,12 +70,14 @@ export default {
                 tipo:tipo==='compra' ? 'venta' : 'compra',
                 precio:1,
                 cantidad:precioTotal,
+                fecha: new Date(),
                 detalles:transaccion.divisa
             };
 
             let transaccionCripto = {
                 tipo,
                 precio: transaccion.precio,
+                fecha: new Date(),
                 cantidad: transaccion.cantidad,
                 detalles:''
             }
