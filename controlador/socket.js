@@ -3,16 +3,14 @@ import socketioJwt from 'socketio-jwt';
 
 
 const EMITIR = {
-    INICIO:"inicio",
-    NUEVO_PRECIO:"precio",
-    DIVISAS:"divisas",
-    DESCONECTAR:"desconectar",
-    COMPRAR:"comprar",
-    VENDER:"vender"
+    INICIO:"INICIO",
+    NUEVO_PRECIO:"PRECIO",
+    DIVISAS:"DIVISAS",
+    DESCONECTAR:"desconectar"
 };
 
 const ON = {
-    TRANSACCION: "transaccion",
+    TRANSACCION: "TRANSACCION",
     BORRAR_CUENTA: "borrar-cuenta"
 };
 
@@ -48,6 +46,9 @@ export default (server,criptodivisas) => {
                 let usuario = resultado[0];
 
                 socket.usuario = usuario._id;
+                socket.room = usuario._id.toString();
+
+                socket.join(socket.room);
 
                 funcionesSocket(socket,usuario,criptodivisas);
 
@@ -99,7 +100,7 @@ function funcionesSocket(socket,usuario,criptodivisas){
             return;
         }
 
-        let usuario = socket.usuario;
+        let idUsuario = socket.usuario;
 
         let tipo = 'compra';
 
@@ -107,12 +108,17 @@ function funcionesSocket(socket,usuario,criptodivisas){
             tipo = 'venta';
         }
 
-        controladorUsuario.nuevaTransaccion(usuario,tipo,transaccion).then(resultado => {
+        controladorUsuario.nuevaTransaccion(idUsuario,tipo,transaccion).then(resultado => {
 
             if(resultado===false){
                 callback(true);
             }else{
+
+                socket.to(socket.room).emit(ON.TRANSACCION,resultado);
+                console.log(idUsuario)
+
                 callback(false,resultado);
+
             }
 
         }).catch(err => {
@@ -127,9 +133,14 @@ function funcionesSocket(socket,usuario,criptodivisas){
 
     socket.on(ON.BORRAR_CUENTA,()=>{
         controladorUsuario.borrar(socket.usuario).then(resultado => {
+
             if(resultado.deletedCount === 1){
-                socket.emit("desconectar");
+
+                socket.to(socket.room).emit(EMITIR.DESCONECTAR);
+                socket.emit(EMITIR.DESCONECTAR);
+
             }
+
         }).catch(err => {
             console.log(err);
             //todo informar al usuario del error

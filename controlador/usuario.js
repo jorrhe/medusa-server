@@ -55,6 +55,10 @@ export default {
 
     },
 
+    async getRankingUsuarios(){
+
+    },
+
     async nuevaTransaccion(guid,tipo,transaccion){
 
         let usuario = await Usuario.findById(guid).exec();
