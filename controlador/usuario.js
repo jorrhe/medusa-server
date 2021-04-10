@@ -55,7 +55,61 @@ export default {
 
     },
 
-    async getRankingUsuarios(){
+    async getRankingUsuarios(criptodivisas){
+
+        let ranking = await Usuario.aggregate([
+            {
+                $project: {
+                    item: 1,
+                    nombre:'$nombre',
+                    resets:'$resets',
+                    cartera: { $objectToArray: "$cartera" },
+                }
+            },
+            {
+                $unset:'cartera.v.transacciones'
+            },
+            {
+                $unwind:'$cartera'
+            },
+            {
+                $match:{
+                    'cartera.v.cantidad':{
+                        $ne:0
+                    }
+                }
+            },
+            {
+                $group:{
+                    _id:'$_id',
+                    nombre: {$first:'$nombre'},
+                    resets:{$first:'$resets'},
+                    cartera:{
+                        $addToSet:'$cartera'
+                    }
+                }
+            }
+        ]);
+
+
+        return ranking.map(datosUsuario=>{
+
+            let usuario = {
+                nombre: datosUsuario.nombre,
+                resets: datosUsuario.resets
+            }
+
+            usuario.total = datosUsuario.cartera.reduce((acu,divisa)=>{
+
+                let precio = criptodivisas.getPrecioValor(divisa.k),
+                    cantidad = divisa.v.cantidad;
+
+                return acu + (precio*cantidad);
+            },0);
+
+            return usuario;
+
+        });
 
     },
 

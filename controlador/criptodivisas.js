@@ -16,6 +16,8 @@ export default class Criptodivisas{
 
         this.apiCoingecko = new ApiCoingecko();
 
+        this.iniciado = false;
+
     }
 
     async init(){
@@ -46,6 +48,7 @@ export default class Criptodivisas{
 
         console.log("Carga inicial API completada");
 
+        this.iniciado = true;
     }
 
     /**
@@ -128,6 +131,14 @@ export default class Criptodivisas{
 
     getDivisa(idDivisa){
         return this.divisas[idDivisa];
+    }
+
+    getPrecioValor(idDivisa){
+        if(idDivisa==='fiat'){
+            return 1;
+        }
+
+        return this.divisas[idDivisa].precio.valor;
     }
 
 }
