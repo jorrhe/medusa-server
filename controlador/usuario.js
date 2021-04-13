@@ -91,8 +91,7 @@ export default {
             }
         ]);
 
-
-        return ranking.map(datosUsuario=>{
+        let usuarios = ranking.map(datosUsuario=>{
 
             let usuario = {
                 nombre: datosUsuario.nombre,
@@ -105,11 +104,16 @@ export default {
                     cantidad = divisa.v.cantidad;
 
                 return acu + (precio*cantidad);
+
             },0);
 
             return usuario;
 
         });
+
+        usuarios.sort((a,b)=>a-b);
+
+        return usuarios.splice(0,10);
 
     },
 

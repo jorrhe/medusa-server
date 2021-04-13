@@ -11,7 +11,8 @@ const EMITIR = {
 
 const ON = {
     TRANSACCION: "TRANSACCION",
-    BORRAR_CUENTA: "borrar-cuenta"
+    BORRAR_CUENTA: "borrar-cuenta",
+    RANKING:"RANKING"
 };
 
 import controladorUsuario from './usuario.js';
@@ -125,9 +126,25 @@ function funcionesSocket(socket,usuario,criptodivisas){
 
             console.log(err);
 
-            callback(false,'Ha ocurrido un error con la BD');
+            callback(true,'Ha ocurrido un error con la BD');
 
         });
+
+    });
+
+    socket.on(ON.RANKING,callback=>{
+
+        controladorUsuario.getRankingUsuarios(criptodivisas).then(resultado=>{
+
+            console.log(resultado);
+            callback(false,resultado);
+
+        }).catch(err => {
+
+            console.log(err);
+            callback(true,'Ha ocurrido un error con la BD');
+
+        })
 
     });
 
