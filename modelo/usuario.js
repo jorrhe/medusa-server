@@ -38,5 +38,4 @@ const Usuario = new mongoose.Schema ({
 
 Usuario.methods.getCantidad = (id) => this.cartera[id].cantidad;
 
-
 export default mongoose.model('Usuario', Usuario);

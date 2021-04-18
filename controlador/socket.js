@@ -136,7 +136,6 @@ function funcionesSocket(socket,usuario,criptodivisas){
 
         controladorUsuario.getRankingUsuarios(criptodivisas).then(resultado=>{
 
-            console.log(resultado);
             callback(false,resultado);
 
         }).catch(err => {

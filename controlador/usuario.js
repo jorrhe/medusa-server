@@ -1,5 +1,6 @@
 import Usuario from "../modelo/usuario.js";
 import DIVISAS from '../modelo/criptodivisas.js';
+import Eliminado from "../modelo/eliminado.js";
 
 export default {
 
@@ -23,6 +24,12 @@ export default {
             }]
         };
 
+        let eliminado = await Eliminado.find({id_google:datos.id_google})
+
+        if(eliminado.length > 0){
+            datos.resets = eliminado[0].resets;
+        }
+
         let nuevoUsuario = new Usuario(datos);
 
         await nuevoUsuario.save();
@@ -30,6 +37,14 @@ export default {
     },
 
     async borrar(id){
+
+        let usuario = await Usuario.findById(id);
+
+        const query = { id_google: usuario.id_google };
+        const update = { $set: { id_google: usuario.id_google, resets: usuario.resets+1 }};
+
+        await Eliminado.updateOne(query, update, { upsert: true });
+
         return Usuario.deleteOne({_id:id});
     },
 
