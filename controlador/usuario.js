@@ -126,7 +126,7 @@ export default {
 
         });
 
-        usuarios.sort((a,b)=>a-b);
+        usuarios.sort((a,b)=>b.total-a.total);
 
         return usuarios.splice(0,10);
 
