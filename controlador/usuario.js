@@ -48,6 +48,33 @@ export default {
         return Usuario.deleteOne({_id:id});
     },
 
+    async reset(id){
+
+        let usuario = await Usuario.findById(id);
+
+        Object.keys(usuario.cartera).forEach(divisa => {
+            usuario.cartera[divisa] = {
+                cantidad: 0,
+                transacciones: []
+            };
+        });
+
+        usuario.cartera.fiat = {
+            cantidad: 10000,
+            transacciones: [{
+                cantidad:10000,
+                precio:1,
+                detalles:"Dinero inicial"
+            }]
+        };
+
+        usuario.resets++;
+
+        usuario.save();
+
+        return usuario;
+    },
+
     async getUsuario(idGoogle){
         return Usuario.find({id_google: idGoogle},{_v:false});
     },
@@ -141,7 +168,7 @@ export default {
         let carteraCripto = usuario.cartera[transaccion.divisa],
             carteraFiat = usuario.cartera['fiat'];
 
-        if (carteraFiat.cantidad > precioTotal && carteraCripto){
+        if (carteraFiat.cantidad >= precioTotal && carteraCripto){
 
             let transaccionFiat = {
                 tipo:tipo==='compra' ? 'venta' : 'compra',

@@ -12,6 +12,7 @@ const EMITIR = {
 const ON = {
     TRANSACCION: "TRANSACCION",
     BORRAR_CUENTA: "borrar-cuenta",
+    RESETEAR:"resetear",
     RANKING:"RANKING"
 };
 
@@ -51,7 +52,7 @@ export default (server,criptodivisas) => {
 
                 socket.join(socket.room);
 
-                funcionesSocket(socket,usuario,criptodivisas);
+                funcionesSocket(io,socket,usuario,criptodivisas);
 
             }else{
 
@@ -87,7 +88,7 @@ export default (server,criptodivisas) => {
  * @param {Usuario} usuario
  * @param {Criptodivisas} criptodivisas
  */
-function funcionesSocket(socket,usuario,criptodivisas){
+function funcionesSocket(io,socket,usuario,criptodivisas){
 
     socket.emit(EMITIR.INICIO, {
         usuario:usuario,
@@ -116,7 +117,6 @@ function funcionesSocket(socket,usuario,criptodivisas){
             }else{
 
                 socket.to(socket.room).emit(ON.TRANSACCION,resultado);
-                console.log(idUsuario)
 
                 callback(false,resultado);
 
@@ -147,13 +147,28 @@ function funcionesSocket(socket,usuario,criptodivisas){
 
     });
 
+    socket.on(ON.RESETEAR,()=>{
+
+        controladorUsuario.reset(socket.usuario).then(resultado => {
+
+            io.to(socket.room).emit(EMITIR.INICIO,{
+                usuario:resultado,
+                divisas:criptodivisas.divisas
+            })
+
+        }).catch(err => {
+            console.log(err);
+            //todo informar al usuario del error
+        });
+
+    });
+
     socket.on(ON.BORRAR_CUENTA,()=>{
         controladorUsuario.borrar(socket.usuario).then(resultado => {
 
             if(resultado.deletedCount === 1){
 
-                socket.to(socket.room).emit(EMITIR.DESCONECTAR);
-                socket.emit(EMITIR.DESCONECTAR);
+                io.to(socket.room).emit(EMITIR.DESCONECTAR);
 
             }
 

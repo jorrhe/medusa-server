@@ -93,7 +93,8 @@ export default class Criptodivisas{
             // Esto lo hacemos para que en el array que tiene el servidor con los último precios,
             // solo estén las últimas 24h
             if(fechaNueva-ultFecha > 250000){
-                divisa.precios.splice(0,1).push([fechaNueva,precioNuevo.eur]);
+                divisa.precios.splice(0,1);
+                divisa.precios.push([fechaNueva,precioNuevo.eur]);
             }
 
         });
