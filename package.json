@@ -15,11 +15,11 @@
     "coingecko-api": "^1.0.10",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "google-auth-library": "^7.0.3",
-    "helmet": "^4.4.1",
+    "google-auth-library": "^7.0.4",
+    "helmet": "^4.5.0",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",
-    "mongoose": "^5.12.3",
+    "mongoose": "^5.12.5",
     "socket.io": "^4.0.1",
     "socketio-jwt": "^4.6.2"
   }
