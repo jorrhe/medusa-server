@@ -168,13 +168,16 @@ export default {
         let carteraCripto = usuario.cartera[transaccion.divisa],
             carteraFiat = usuario.cartera['fiat'];
 
-        if (carteraFiat.cantidad >= precioTotal && carteraCripto){
+        let comision = precioTotal * 0.01;
+
+        if (((tipo==='compra' && carteraFiat.cantidad >= (precioTotal + comision)) || tipo==='venta') && carteraCripto){
 
             let transaccionFiat = {
                 tipo:tipo==='compra' ? 'venta' : 'compra',
                 precio:1,
                 cantidad:precioTotal,
                 fecha: new Date(),
+                comision: comision,
                 detalles:transaccion.divisa
             };
 
@@ -183,13 +186,19 @@ export default {
                 precio: transaccion.precio,
                 fecha: new Date(),
                 cantidad: transaccion.cantidad,
+                comision: comision,
                 detalles:''
             }
 
             carteraCripto.cantidad += (tipo==='compra' ? 1 : -1) * transaccion.cantidad;
             carteraCripto.transacciones.push(transaccionCripto);
 
+            if(carteraCripto.cantidad * transaccion.precio < 0.1){
+                carteraCripto.cantidad = 0;
+            }
+
             carteraFiat.cantidad += (tipo==='compra' ? -1 : 1) * precioTotal;
+            carteraFiat.cantidad -= comision;
             carteraFiat.transacciones.push(transaccionFiat);
 
             await usuario.save();

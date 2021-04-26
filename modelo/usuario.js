@@ -20,6 +20,10 @@ Object.keys(DIVISAS).concat('fiat').forEach((divisa)=>{
                 enum: ['compra','venta'],
                 default: 'compra'
             },
+            comision:{
+                type:Number,
+                default: 0
+            },
             detalles:String
         }]
     }
