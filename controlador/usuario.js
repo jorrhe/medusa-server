@@ -163,14 +163,20 @@ export default {
 
         let usuario = await Usuario.findById(guid).exec();
 
-        let precioTotal = transaccion.cantidad * transaccion.precio;
+        let precioTotal = truncarDecimales(transaccion.cantidad * transaccion.precio);
 
         let carteraCripto = usuario.cartera[transaccion.divisa],
             carteraFiat = usuario.cartera['fiat'];
 
-        let comision = precioTotal * 0.01;
+        let comision = truncarDecimales(precioTotal * 0.01);
 
-        if (((tipo==='compra' && carteraFiat.cantidad >= (precioTotal + comision)) || tipo==='venta') && carteraCripto){
+        if(comision<1)
+            comision = 1;
+
+        if (
+            (tipo==='compra' && carteraFiat.cantidad >= (precioTotal + comision)) ||
+            (tipo==='venta' && carteraCripto.cantidad >= transaccion.cantidad)
+        ){
 
             let transaccionFiat = {
                 tipo:tipo==='compra' ? 'venta' : 'compra',
@@ -194,6 +200,7 @@ export default {
             carteraCripto.transacciones.push(transaccionCripto);
 
             if(carteraCripto.cantidad * transaccion.precio < 0.1){
+                transaccionCripto.cantidad+=carteraCripto.cantidad;
                 carteraCripto.cantidad = 0;
             }
 
@@ -208,6 +215,10 @@ export default {
                 [transaccion.divisa]:transaccionCripto
             }
 
+        }else{
+            console.log("Error al generar transaccion");
+            console.log("FIAT: ",carteraFiat.cantidad,precioTotal,comision,precioTotal+comision)
+            console.log("DIVI: ",carteraCripto.cantidad,transaccion.cantidad)
         }
 
         return false;
@@ -215,3 +226,8 @@ export default {
     }
 
 };
+
+function truncarDecimales(numero, dec = 2) {
+    const decimales = Math.pow(10, dec);
+    return Math.trunc(numero * decimales)/decimales;
+}
