@@ -8,12 +8,12 @@ export default class ApiCoingecko{
         this.coinGeckoClient = new CoinGecko();
     }
 
-    async getUltimas24H(id){
+    async getUltimosPrecios(id,dias = 1){
         while (true) {
             try {
 
                 let respuesta = await this.coinGeckoClient.coins.fetchMarketChartRange(id, {
-                    from: moment().subtract(1, "days",).unix(),
+                    from: moment().subtract(dias, "days",).unix(),
                     to: moment().unix(),
                     vs_currency: 'eur'
                 });

@@ -75,7 +75,7 @@ export default (server,criptodivisas) => {
         io.emit(EMITIR.NUEVO_PRECIO,id,precio)
     });
 
-    criptodivisas.on('ult24h',(divisas) => {
+    criptodivisas.on('ultPrecios',(divisas) => {
         io.emit(EMITIR.DIVISAS,divisas);
     });
 

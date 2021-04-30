@@ -7,7 +7,7 @@ export default class Criptodivisas{
 
         this.listeners = {
             cambioPrecio:()=>{},
-            ult24h:()=>{}
+            ultPrecios:()=>{}
         };
 
         this.divisas = DIVISAS;
@@ -24,13 +24,20 @@ export default class Criptodivisas{
         // Cargamos los precios de las últimas 24h de todas las divisas
         for(let i = 0; i < this.ids.length; i++){
             let id = this.ids[i];
-            let precios = await this.apiCoingecko.getUltimas24H(id);
 
-            if(precios !== false){
+            let preciosDia = await this.apiCoingecko.getUltimosPrecios(id,1);
+            let preciosSemana = await this.apiCoingecko.getUltimosPrecios(id,7);
+            let preciosMes = await this.apiCoingecko.getUltimosPrecios(id,30);
 
-                this.divisas[id].precios = precios;
+            if(preciosDia !== false && preciosSemana !== false && preciosMes !== false){
 
-                let ultimoPrecio = precios[precios.length-1]
+                this.divisas[id].precios = {
+                    dia: preciosDia,
+                    semana: preciosSemana,
+                    mes: preciosMes
+                };
+
+                let ultimoPrecio = preciosDia[preciosDia.length-1]
 
                 this.divisas[id].precio = {
                     fecha: 0,
@@ -42,7 +49,7 @@ export default class Criptodivisas{
 
         }
 
-        this.listeners.ult24h(this.divisas);
+        this.listeners.ultPrecios(this.divisas);
 
         await this.precioActual();
 
@@ -87,14 +94,31 @@ export default class Criptodivisas{
 
             this.listeners.cambioPrecio(id,divisa.precio);
 
-            let ultFecha = divisa.precios[divisa.precios.length-1][0];
+            let preciosDia = divisa.precios.dia;
+            let preciosSemana = divisa.precios.semana;
+            let preciosMes = divisa.precios.mes;
+
+            let ultFechaDia = preciosDia[preciosDia.length-1][0];
+            let ultFechaSemana = preciosSemana[preciosSemana.length-1][0];
+            let ultFechaMes = preciosMes[preciosMes.length-1][0];
 
             // Eliminamos el primer valor del array si hay una diferencia de más de ~4 minutos
             // Esto lo hacemos para que en el array que tiene el servidor con los último precios,
             // solo estén las últimas 24h
-            if(fechaNueva-ultFecha > 250000){
-                divisa.precios.splice(0,1);
-                divisa.precios.push([fechaNueva,precioNuevo.eur]);
+            if(fechaNueva-ultFechaDia > 250000){
+                preciosDia.splice(0,1);
+                preciosDia.push([fechaNueva,precioNuevo.eur]);
+            }
+
+            if(fechaNueva-ultFechaSemana > 3570000){
+                preciosSemana.splice(0,1);
+                preciosSemana.push([fechaNueva,precioNuevo.eur]);
+            }
+
+
+            if(fechaNueva-ultFechaMes > 3583600){
+                preciosMes.splice(0,1);
+                preciosMes.push([fechaNueva,precioNuevo.eur]);
             }
 
         });
@@ -117,7 +141,9 @@ export default class Criptodivisas{
             return false;
         }
 
-        let penultimoPrecio = divisa.precios[divisa.precios.length-2].valor;
+        let preciosDia = divisa.precios.dia;
+
+        let penultimoPrecio = preciosDia[preciosDia.length-2].valor;
 
         if(divisa.precio.valor !== transaccion.precio && penultimoPrecio !== transaccion.precio){
             console.log("Error con el precio de la transaccion");
