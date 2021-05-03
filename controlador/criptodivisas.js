@@ -26,7 +26,7 @@ export default class Criptodivisas{
             let id = this.ids[i];
 
             let preciosDia = await this.apiCoingecko.getUltimosPrecios(id,1);
-            let preciosSemana = await this.apiCoingecko.getUltimosPrecios(id,7);
+            let preciosSemana = await this.apiCoingecko.getUltimosPrecios(id,8);
             let preciosMes = await this.apiCoingecko.getUltimosPrecios(id,30);
 
             if(preciosDia !== false && preciosSemana !== false && preciosMes !== false){

@@ -8,12 +8,12 @@ export default class ApiCoingecko{
         this.coinGeckoClient = new CoinGecko();
     }
 
-    async getUltimosPrecios(id,dias = 1){
+    async getUltimosPrecios(id,numero = 1){
         while (true) {
             try {
 
                 let respuesta = await this.coinGeckoClient.coins.fetchMarketChartRange(id, {
-                    from: moment().subtract(dias, "days",).unix(),
+                    from: moment().subtract(numero, "days",).unix(),
                     to: moment().unix(),
                     vs_currency: 'eur'
                 });
@@ -21,6 +21,7 @@ export default class ApiCoingecko{
                 if (respuesta.success && respuesta.code === 200) {
                     return respuesta.data.prices;
                 }
+
                 console.log(respuesta);
 
 
