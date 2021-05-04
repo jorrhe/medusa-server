@@ -22,12 +22,12 @@ export default class ApiCoingecko{
                     return respuesta.data.prices;
                 }
 
-                console.log(respuesta);
+                console.log(respuesta.success,respuesta.code);
 
 
             }catch (e){
-                console.log("ERROR CON LA API, REINTENTANDO")
-                console.log(e);
+                console.log("ERROR CON LA API, REINTENTANDO",id,numero)
+                console.log(e.message);
             }
 
         }
@@ -36,7 +36,7 @@ export default class ApiCoingecko{
 
     async getAhora(idsDivisas){
 
-        for(let i = 0; i < 2; i++){
+        for(let i = 0; i < 10; i++){
             try {
 
                 let respuesta = await this.coinGeckoClient.simple.price({
@@ -50,7 +50,7 @@ export default class ApiCoingecko{
                     return respuesta.data;
                 }
 
-                console.log(respuesta);
+                console.log(respuesta.code);
             }catch (e){
                 console.log("Reintentando getAhora");
             }
