@@ -51,11 +51,11 @@ export default class Criptodivisas{
 
         this.listeners.ultPrecios(this.divisas);
 
+        this.iniciado = true;
+
         await this.precioActual();
 
         console.log("Carga inicial API completada");
-
-        this.iniciado = true;
     }
 
     /**
@@ -68,6 +68,11 @@ export default class Criptodivisas{
     }
 
     async precioActual(){
+
+        if(this.iniciado===false){
+            console.log("Todavia no se ha iniciado")
+            return;
+        }
 
         let precios = await this.apiCoingecko.getAhora(Object.keys(DIVISAS));
 

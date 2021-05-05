@@ -1,12 +1,16 @@
 import {Server,Socket} from "socket.io";
 import socketioJwt from 'socketio-jwt';
 
+const vString = process.env.npm_package_version || "0";
+
+const VERSION = parseInt(vString.replace(/\./g, ''))
 
 const EMITIR = {
     INICIO:"INICIO",
     NUEVO_PRECIO:"PRECIO",
     DIVISAS:"DIVISAS",
-    DESCONECTAR:"desconectar"
+    DESCONECTAR:"desconectar",
+    VERSION:"version"
 };
 
 const ON = {
@@ -77,13 +81,14 @@ export default (server,criptodivisas) => {
 
     criptodivisas.on('ultPrecios',(divisas) => {
         io.emit(EMITIR.DIVISAS,divisas);
+        io.emit(EMITIR.VERSION,VERSION);
     });
 
     return io;
 
 }
 /**
- *
+ * @param {Server} io
  * @param {Socket} socket
  * @param {Usuario} usuario
  * @param {Criptodivisas} criptodivisas
@@ -94,6 +99,10 @@ function funcionesSocket(io,socket,usuario,criptodivisas){
         usuario:usuario,
         divisas:criptodivisas.divisas
     });
+
+    if(criptodivisas.iniciado){
+        socket.emit(EMITIR.VERSION,VERSION);
+    }
 
     socket.on(ON.TRANSACCION,(transaccion,callback)=>{
 
