@@ -21,13 +21,11 @@ router.post('/google',async (req,res)=>{
     //todo verificar que el body contiene todo y es válido
     let tokenGoogle = false;
 
-    if(req.body.google && req.body.google.uc){
-        tokenGoogle = req.body.google.uc.id_token;
-    }else if(req.body.google && req.body.google.tc){
-        tokenGoogle = req.body.google.tc.id_token;
-    }else if(req.body.google && req.body.google.qc){
-        tokenGoogle = req.body.google.qc.id_token;
-    }
+    Object.keys(req.body.google).forEach(elemento => {
+        if(req.body.google[elemento].id_token){
+            tokenGoogle = req.body.google[elemento].id_token;
+        }
+    })
 
     if(!tokenGoogle){
         console.log(req.body);
