@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="https://github.com/beybo/medusa/raw/master/src/assets/img/LogoMedusa.svg" width="300"/>
+  <img src="https://github.com/jorrhe/medusa/raw/master/src/assets/img/LogoMedusa.svg" width="300"/>
 </p>
 
 <h1 align="center">Medusa Server</h1>
 
-Servidor usado para la app de [medusa](https://github.com/beybo/medusa).
+Servidor usado para la app de [medusa](https://github.com/jorrhe/medusa).
 
 Es necesario que definas las siguientes variables de entorno:
 
