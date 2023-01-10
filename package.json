@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js"
   },
-  "author": "Jorge Roselló Martín",
+  "author": "jorrhe",
   "license": "ISC",
   "type": "module",
   "dependencies": {
